@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 #quickWeather.py - print weather for location
-import json, requests, os
+import json, requests, os, sys
+
+#location settings
+if len(sys.argv) > 2:
+    city = ' '.join(sys.argv[1:-1])
+    state = sys.argv[-1]
+else:
+    print('Usage: QuickWeather.py City State')
+    sys.exit()
+
+print(city,state)
 
 #get personal Wunderground api key
 keyFile = open(os.path.join(os.path.expanduser('~'), '.WundKey'))
 key = keyFile.read().strip()
 keyFile.close()
-
-#location settings
-state = 'OH'
-city = 'Cleveland'
 
 #get json from wunderground
 url = 'http://api.wunderground.com/api/%s/conditions/q/%s/%s.json' % (key, state, city)
