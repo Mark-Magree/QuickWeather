@@ -2,17 +2,15 @@
 #quickWeather.py - print weather for location
 import json, requests, os, sys
 
-#location settings
+#first take cli args, then ask for city/state if none
 if len(sys.argv) > 2:
     city = ' '.join(sys.argv[1:-1])
     state = sys.argv[-1]
 else:
-    print('Usage: QuickWeather.py City State')
-    sys.exit()
+    city = input('City: ')
+    state = input('State: ')
 
-print(city,state)
-
-#get personal Wunderground api key
+#get personal Wunderground api key from home folder
 keyFile = open(os.path.join(os.path.expanduser('~'), '.WundKey'))
 key = keyFile.read().strip()
 keyFile.close()
@@ -24,6 +22,7 @@ response.raise_for_status()
 weatherData = json.loads(response.text)
 
 #all the good stuff is in current_observation
+#TODO Add error checking for broken key or nonexistant city
 w = weatherData['current_observation']
 
 #output 
