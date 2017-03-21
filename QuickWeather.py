@@ -34,16 +34,17 @@ imgFile.close()
 
 #prepare data for radar text
 
-#reopen radar and prepare to add text
-img = Image.open('RadarForecast.gif')
+#reopen radar image and prepare to add text
+img = Image.open('RadarForecast.gif').convert('RGBA')
 draw = ImageDraw.Draw(img)
 fontsFolder = os.path.join('/','usr','share','fonts','ttf')
 droidFont = ImageFont.truetype(os.path.join(fontsFolder, 'DroidSans.ttf'), 32)
 
 #add text to radar
-draw.text((40, 50), 'TEMpeRaTure Is fun egrees', fill='purple', font=droidFont)
+draw.text((40, 50), 'TEMpeRaTure Is fun egrees', fill='lightgray',font=droidFont)
 
 
 #save final image
+del draw
 img.show()
-#img.save('RadarForecast.gif')
+img.save('RadarForecastInfo.gif')
