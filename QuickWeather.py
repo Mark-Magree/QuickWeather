@@ -6,10 +6,26 @@ from PIL import Image, ImageDraw, ImageFont
 fontSize = 16
 height, width = 750, 1200
 
+#get list of states from file
+#dict from file to save script space
+
+'''
+with open('statelist.json') as json_data:
+    d = json.load(json_data)
+    state = stateFull
+    print(d[state.title()])
+'''
+
 #first take cli args, then ask for city/state if none
-if len(sys.argv) > 2:
+if len(sys.argv) > 2 and not sys.argv[-2].lower() == 'new':
     city = ' '.join(sys.argv[1:-1])
     state = sys.argv[-1]
+elif len(sys.argv) > 2 and sys.argv[-2].lower() == 'new':
+    city = ' '.join(sys.argv[1:-2])
+    stateLong = ' '.join(sys.argv[-2:])
+    with open('statelist.json') as json_data:
+        d = json.load(json_data)
+        state = d[stateLong.title()]
 else:
     city = input('City: ')
     state = input('State: ')
@@ -18,6 +34,7 @@ else:
 keyFile = open(os.path.join(os.path.expanduser('~'), '.WundKey'))
 key = keyFile.read().strip()
 keyFile.close()
+
 #get info and radar from wunderground
 forecastUrl = 'http://api.wunderground.com/api/%s/forecast/q/%s/%s.json' % (key, state, city)
 radarUrl = 'http://api.wunderground.com/api/%s/radar/q/%s/%s.gif?width=%s&height=%s&newmaps=1' % (key, state, city, width, height)
@@ -53,7 +70,7 @@ droidFont = ImageFont.truetype(os.path.join(fontsFolder, 'DroidSans.ttf'), fontS
 
 #add text to radar
 def placeText(data):
-    draw.text((x, y), data, fill='white',font=droidFont)
+    draw.text((x, y), data, fill='white', font=droidFont)
 x,y = 30,10
 for i in times['today']:
     placeText(i)
@@ -74,5 +91,6 @@ for i in times['tomNight']:
 
 #save final image
 del draw
+os.remove('RadarForecast.gif')
 img.save('RadarForecastInfo.gif')
 img.show()
