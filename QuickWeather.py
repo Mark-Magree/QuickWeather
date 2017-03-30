@@ -6,16 +6,6 @@ from PIL import Image, ImageDraw, ImageFont
 fontSize = 16
 height, width = 750, 1200
 
-#get list of states from file
-#dict from file to save script space
-
-'''
-with open('statelist.json') as json_data:
-    d = json.load(json_data)
-    state = stateFull
-    print(d[state.title()])
-'''
-
 #first take cli args, then ask for city/state if none
 if len(sys.argv) > 2 and not sys.argv[-2].lower() == 'new':
     city = ' '.join(sys.argv[1:-1])
@@ -37,21 +27,25 @@ keyFile.close()
 
 #get info and radar from wunderground
 forecastUrl = 'http://api.wunderground.com/api/%s/forecast/q/%s/%s.json' % (key, state, city)
-radarUrl = 'http://api.wunderground.com/api/%s/radar/q/%s/%s.gif?width=%s&height=%s&newmaps=1' % (key, state, city, width, height)
+radarUrl = 'http://api.wunderground.com/api/%s/radar/q/%s/%s.png?width=%s&height=%s&newmaps=1' % (key, state, city, width, height)
 resForecast = requests.get(forecastUrl)
 resForecast.raise_for_status()
 resRadar = requests.get(radarUrl)
 resRadar.raise_for_status()
 
 #save radar file
-imgFile = open('RadarForecast.gif', 'wb')
+imgFile = open('RadarForecast.png', 'wb')
 for chunk in resRadar.iter_content(100000):
     imgFile.write(chunk)
 imgFile.close()
 
 #convert and prepare JSON data
 rawData = json.loads(resForecast.text)
-data = rawData['forecast']['txt_forecast']['forecastday']
+try:
+    data = rawData['forecast']['txt_forecast']['forecastday']
+except KeyError:
+    print("Location not found")
+    sys.exit()
 
 #prepare data for radar text
 times = {'today':[],'tonight':[],'tomorrow':[],'tomNight':[]}
@@ -63,7 +57,7 @@ for d in times.values():
     t += 1
 
 #reopen radar image and prepare to add text
-img = Image.open('RadarForecast.gif').convert('RGBA')
+img = Image.open('RadarForecast.png').convert('RGBA')
 draw = ImageDraw.Draw(img)
 fontsFolder = os.path.join('/','usr','share','fonts','ttf')
 droidFont = ImageFont.truetype(os.path.join(fontsFolder, 'DroidSans.ttf'), fontSize)
@@ -91,6 +85,6 @@ for i in times['tomNight']:
 
 #save final image
 del draw
-os.remove('RadarForecast.gif')
-img.save('RadarForecastInfo.gif')
+os.remove('RadarForecast.png')
+img.save('RadarForecastInfo.png')
 img.show()
