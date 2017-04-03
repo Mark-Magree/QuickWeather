@@ -7,10 +7,20 @@ fontSize = 16
 height, width = 750, 1200
 
 #first take cli args, then ask for city/state if none
-if len(sys.argv) > 2 and not sys.argv[-2].lower() == 'new':
+if len(sys.argv) > 2 and not \
+        str(' '.join(sys.argv[-2:])).lower() in\
+        ['new york','new hampshire','new mexico',\
+        'north carolina','north dakota',\
+        'south carolina','south dakota',\
+        'west virginia','new jersey']:
     city = ' '.join(sys.argv[1:-1])
     state = sys.argv[-1]
-elif len(sys.argv) > 2 and sys.argv[-2].lower() == 'new':
+elif len(sys.argv) > 2 and \
+        str(' '.join(sys.argv[-2:])).lower() in\
+        ['new york','new hampshire','new mexico',\
+        'north carolina','north dakota',\
+        'south carolina','south dakota',\
+        'west virginia','new jersey']:
     city = ' '.join(sys.argv[1:-2])
     stateLong = ' '.join(sys.argv[-2:])
     with open('statelist.json') as json_data:
