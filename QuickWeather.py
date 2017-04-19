@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
-#quickWeather.py - print weather for location
+#quickWeather.py - by Mark Magree
+#show radar with imposed forecast discussion
+#Usage: QuickWeather.py [city state]
+#if no command line arguments are given, QuickWeather will ask
+
 import json, requests, os, sys
 from PIL import Image, ImageDraw, ImageFont
 
 fontSize = 16
 height, width = 750, 1200
+
+
+#TODO : ADD WARNINGS
+
 
 #first take cli args, then ask for city/state if none
 if len(sys.argv) > 2 and not \
